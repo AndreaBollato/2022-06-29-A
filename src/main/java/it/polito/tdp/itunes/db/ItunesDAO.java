@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
 import it.polito.tdp.itunes.model.Album;
 import it.polito.tdp.itunes.model.Artist;
 import it.polito.tdp.itunes.model.Genre;
@@ -16,24 +18,39 @@ import it.polito.tdp.itunes.model.Track;
 
 public class ItunesDAO {
 	
-	public List<Album> getAllAlbums(){
-		final String sql = "SELECT * FROM Album";
-		List<Album> result = new LinkedList<>();
+	public void getAllAlbums(Map<Integer, Album> identity_map, Integer n){
+//		final String sql = "SELECT * "
+//				+ "FROM album "
+//				+ "WHERE AlbumId IN ( "
+//				+ "SELECT AlbumId "
+//				+ "FROM track "
+//				+ "GROUP BY AlbumId "
+//				+ "HAVING COUNT(*) > ? "
+//				+ ")";
+		
+		final String sql = "SELECT a.AlbumId, title, COUNT(*) as n "
+				+ "FROM album a, track t "
+				+ "WHERE t.`AlbumId` = a.`AlbumId` "
+				+ "GROUP BY a.AlbumId "
+				+ "HAVING COUNT(*) > ?";
+		
+		
 		
 		try {
 			Connection conn = DBConnect.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, n);
 			ResultSet res = st.executeQuery();
 
 			while (res.next()) {
-				result.add(new Album(res.getInt("AlbumId"), res.getString("Title")));
+				Album a = new Album(res.getInt("AlbumId"), res.getString("Title"), res.getInt("n"));
+				identity_map.put(a.getAlbumId(), a);
 			}
 			conn.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 			throw new RuntimeException("SQL Error");
 		}
-		return result;
 	}
 	
 	public List<Artist> getAllArtists(){

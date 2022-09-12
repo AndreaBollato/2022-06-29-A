@@ -5,6 +5,7 @@
 package it.polito.tdp.itunes;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 import it.polito.tdp.itunes.model.Album;
 import it.polito.tdp.itunes.model.Model;
@@ -35,7 +36,7 @@ public class FXMLController {
     private Button btnPercorso; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbA1"
-    private ComboBox<?> cmbA1; // Value injected by FXMLLoader
+    private ComboBox<Album> cmbA1; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbA2"
     private ComboBox<?> cmbA2; // Value injected by FXMLLoader
@@ -51,6 +52,16 @@ public class FXMLController {
 
     @FXML
     void doCalcolaAdiacenze(ActionEvent event) {
+    	Album a1 = this.cmbA1.getValue();
+    	if(a1 != null) {
+    		List<Album> albums = this.model.get_successori(a1);
+    		this.txtResult.setText("");
+    		for(Album a : albums) {
+    			this.txtResult.appendText(a.toString_result());
+    			this.txtResult.appendText("\n");
+    		}
+    		
+    	}
     	
     }
 
@@ -61,6 +72,16 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
+    	String s = this.txtN.getText();
+    	try {
+			Integer n = Integer.valueOf(s);
+			this.model.crea_grafo(n);
+			this.cmbA1.getItems().clear();
+			this.cmbA1.getItems().addAll(this.model.getAllAbumsInGrafo());
+		} catch (Exception e) {
+			// TODO: handle exception
+			this.txtResult.setText("Inserire un valore numerico intero valido");
+		}
     	
     }
 
