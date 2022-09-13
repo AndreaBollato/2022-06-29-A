@@ -96,14 +96,16 @@ public class Model {
 	
 	public List<Album> get_successori(Album a1) {
 		calcola_bilanci();
-		Set<DefaultWeightedEdge> archi = this.grafo.outgoingEdgesOf(a1);
-		List<Album> result = new ArrayList<>();
+//		Set<DefaultWeightedEdge> archi = this.grafo.outgoingEdgesOf(a1);
+//		List<Album> result = new ArrayList<>();
+//		
+//		for(DefaultWeightedEdge e : archi) {
+//			result.add(this.grafo.getEdgeTarget(e));
+//		}
 		
-		for(DefaultWeightedEdge e : archi) {
-			result.add(this.grafo.getEdgeTarget(e));
-		}
+		List<Album> successori = Graphs.successorListOf(this.grafo, a1);
 		
-		Collections.sort(result, new Comparator<Album>() {
+		Collections.sort(successori, new Comparator<Album>() {
 			@Override
 			public int compare(Album o1, Album o2) {
 				// TODO Auto-generated method stub
@@ -111,7 +113,7 @@ public class Model {
 			}
 		});
 		
-		return result;
+		return successori;
 	}
 	
 	
